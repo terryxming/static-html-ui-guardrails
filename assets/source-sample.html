@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>亚马逊评论分析报告</title>
+</head>
+<body>
+  <h1 id="report-title">亚马逊评论分析报告</h1>
+  <p>本报告由上游评论分析 skill 生成，static-html-ui-guardrails 只负责UI 表现增强。</p>
+
+  <h2 id="summary">核心判断</h2>
+  <ul>
+    <li>买家主要认可安装便利性和性价比。</li>
+    <li>负面反馈集中在续航、包装和售后响应。</li>
+  </ul>
+
+  <h2 id="evidence">评论证据</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>主题</th>
+        <th>情绪</th>
+        <th>证据摘要</th>
+        <th>评论数</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>续航</td>
+        <td>负向</td>
+        <td>多条长评论提到满电使用时间低于页面描述。</td>
+        <td>18</td>
+      </tr>
+      <tr>
+        <td>安装</td>
+        <td>正向</td>
+        <td>用户认为说明书清楚，首次安装平均耗时较短。</td>
+        <td>27</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="method">分析方法</h2>
+  <pre><code>sentiment = positive_reviews - negative_reviews
+risk = complaint_count / total_reviews</code></pre>
+</body>
+</html>

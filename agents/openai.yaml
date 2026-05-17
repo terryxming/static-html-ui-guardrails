@@ -1,0 +1,6 @@
+interface:
+  display_name: "本地静态 HTML UI 优化约束"
+  short_description: "保持内容结构的本地 HTML UI 优化约束"
+  default_prompt: "Use $static-html-ui-guardrails to optimize an existing local HTML file without changing its content structure."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>亚马逊评论分析报告</title>
+  <style>
+    :root {
+      --gray-0: #ffffff;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-800: #1e293b;
+      --gray-900: #0f172a;
+      --blue-600: #2563eb;
+      --blue-700: #1d4ed8;
+      --color-bg-page: var(--gray-50);
+      --color-bg-surface: var(--gray-0);
+      --color-bg-subtle: var(--gray-100);
+      --color-text-primary: var(--gray-900);
+      --color-text-secondary: var(--gray-600);
+      --color-border: var(--gray-200);
+      --color-border-subtle: var(--gray-100);
+      --color-accent: var(--blue-600);
+      --font-sans: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+      --type-title-xl: 700 32px/1.25 var(--font-sans);
+      --type-section: 700 20px/1.35 var(--font-sans);
+      --type-body: 400 15px/1.7 var(--font-sans);
+      --type-table: 400 13px/1.5 var(--font-sans);
+      --line-table: 1.5;
+      --space-6: 24px;
+      --page-max-wide: 1120px;
+      --section-gap: 28px;
+      --card-padding: 20px;
+      --table-cell-px: 14px;
+      --table-cell-py: 12px;
+      --focus-ring: 0 0 0 3px rgba(37, 99, 235, .24);
+      --chart-blue: #2563eb;
+      --chart-teal: #0f766e;
+      --chart-green: #16a34a;
+      --chart-orange: #ea580c;
+    }
+
+    :root[data-theme="dark"] {
+      --color-bg-page: #0f172a;
+      --color-bg-surface: #111827;
+      --color-bg-subtle: #1f2937;
+      --color-text-primary: #f8fafc;
+      --color-text-secondary: #cbd5e1;
+      --color-border: #334155;
+      --color-border-subtle: #1e293b;
+      --color-accent: #60a5fa;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root[data-theme="auto"] {
+        --color-bg-page: #0f172a;
+        --color-bg-surface: #111827;
+        --color-bg-subtle: #1f2937;
+        --color-text-primary: #f8fafc;
+        --color-text-secondary: #cbd5e1;
+        --color-border: #334155;
+        --color-border-subtle: #1e293b;
+        --color-accent: #60a5fa;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--color-bg-page);
+      color: var(--color-text-primary);
+      font: var(--type-body);
+      letter-spacing: 0;
+    }
+    .document {
+      width: min(100% - 48px, var(--page-max-wide));
+      margin: 0 auto;
+      padding: 40px 0;
+    }
+    .visual-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+    #themeToggle {
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: var(--color-bg-surface);
+      color: var(--color-text-primary);
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    #themeToggle:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+    main {
+      display: grid;
+      gap: var(--section-gap);
+    }
+    h1 {
+      margin: 0 0 12px;
+      font: var(--type-title-xl);
+    }
+    h2 {
+      margin: 0 0 14px;
+      font: var(--type-section);
+    }
+    p {
+      margin: 0;
+      color: var(--color-text-secondary);
+    }
+    section {
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: var(--color-bg-surface);
+      padding: var(--card-padding);
+    }
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--color-text-secondary);
+    }
+    li + li { margin-top: 8px; }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font: var(--type-table);
+      line-height: var(--line-table);
+    }
+    th,
+    td {
+      padding: var(--table-cell-py) var(--table-cell-px);
+      border-bottom: 1px solid var(--color-border-subtle);
+      text-align: left;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    th {
+      background: var(--color-bg-subtle);
+      color: var(--color-text-primary);
+      font-weight: 700;
+    }
+    .number {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      border-radius: 8px;
+      background: var(--color-bg-subtle);
+      padding: 16px;
+      color: var(--color-text-primary);
+    }
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="document">
+    <div class="visual-toolbar">
+      <button id="themeToggle" type="button" aria-label="切换深色模式">切换深色模式</button>
+    </div>
+    <main>
+      <header>
+        <h1 id="report-title">亚马逊评论分析报告</h1>
+        <p>本报告由上游评论分析 skill 生成，static-html-ui-guardrails 只负责UI 表现增强。</p>
+      </header>
+
+      <section aria-labelledby="summary">
+        <h2 id="summary">核心判断</h2>
+        <ul>
+          <li>买家主要认可安装便利性和性价比。</li>
+          <li>负面反馈集中在续航、包装和售后响应。</li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="evidence">
+        <h2 id="evidence">评论证据</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>主题</th>
+                <th>情绪</th>
+                <th>证据摘要</th>
+                <th>评论数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>续航</td>
+                <td>负向</td>
+                <td>多条长评论提到满电使用时间低于页面描述。</td>
+                <td class="number">18</td>
+              </tr>
+              <tr>
+                <td>安装</td>
+                <td>正向</td>
+                <td>用户认为说明书清楚，首次安装平均耗时较短。</td>
+                <td class="number">27</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="method">
+        <h2 id="method">分析方法</h2>
+        <pre><code>sentiment = positive_reviews - negative_reviews
+risk = complaint_count / total_reviews</code></pre>
+      </section>
+    </main>
+  </div>
+  <script>
+    const storageKey = "staticHtmlUiGuardrailsTheme";
+    const root = document.documentElement;
+    const themeToggle = document.getElementById("themeToggle");
+
+    function currentTheme() {
+      return localStorage.getItem(storageKey) || "auto";
+    }
+
+    function applyTheme(theme) {
+      root.dataset.theme = theme;
+      themeToggle.textContent = theme === "dark" ? "切换浅色模式" : "切换深色模式";
+      themeToggle.setAttribute("aria-label", themeToggle.textContent);
+    }
+
+    themeToggle.addEventListener("click", () => {
+      const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem(storageKey, nextTheme);
+      applyTheme(nextTheme);
+    });
+
+    applyTheme(currentTheme());
+  </script>
+</body>
+</html>
