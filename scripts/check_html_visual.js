@@ -180,6 +180,16 @@ const blockFor = (selector) => {
   const match = styleText.match(pattern);
   return match ? match[1] : "";
 };
+const countMatches = (pattern) => [...html.matchAll(pattern)].length;
+const numberVar = (name) => {
+  const pattern = new RegExp(`${name}\\s*:\\s*([0-9.]+)px`, "i");
+  const match = styleText.match(pattern);
+  return match ? Number(match[1]) : null;
+};
+const selectorBlockMatches = (pattern, contentPattern) => {
+  const match = styleText.match(pattern);
+  return Boolean(match && contentPattern.test(match[1]));
+};
 if (/white-space:\s*nowrap/i.test(blockFor("tbody")) || /white-space:\s*nowrap/i.test(blockFor("td"))) {
   add("TABLE-002", "blocker", "检测到表格正文全局 nowrap。", "style", "表格长文本默认必须可换行。", "请只在数字、ID、日期或短状态单元格中使用 nowrap。");
 }
@@ -199,6 +209,38 @@ for (const value of inlineStyles) {
   if (!allowed) {
     add("TOK-002", "warning", `发现未复核的 inline style： ${value}`, "document", "token 化规则只允许受控例外。", "请把样式移入 token/class，或记录该例外。");
   }
+}
+
+const sectionCount = countMatches(/<section\b/gi);
+const navLinkCount = [...html.matchAll(/<nav\b[\s\S]*?<\/nav>/gi)]
+  .map((match) => [...match[0].matchAll(/<a\b/gi)].length)
+  .reduce((sum, value) => sum + value, 0);
+const tableCount = countMatches(/<table\b/gi);
+const hasDistinctDocComponents = /class=["'][^"']*(doc-meta|summary|callout|notice|risk|toc-panel|section-shell|content-rail|data-panel|insight|evidence)[^"']*["']/i.test(html);
+const hasSectionCardRule = selectorBlockMatches(/(?:^|\n)\s*(?:\.toc,\s*)?section\s*\{([\s\S]*?)\}/i, /background:\s*var\(--color-bg-surface\)[\s\S]*border:\s*1px[\s\S]*border-radius:/i);
+if (sectionCount >= 5 && hasSectionCardRule && !hasDistinctDocComponents) {
+  add("VQ-W001", "warning", "检测到多个章节可能使用同一种白卡片样式。", "style", "合规但低质的页面通常会把所有 section 做成同款卡片，导致层级单调。", "请按内容形态区分文档身份区、目录、正文、表格、提示和元信息组件。");
+}
+if (navLinkCount > 8 && !re(/\.toc[\s\S]*(grid|columns|position:\s*sticky|overflow-y:\s*auto)/i)) {
+  add("VQ-W002", "warning", "目录链接较多但缺少导航布局强化。", "style", "目录退化成普通链接长串会降低可扫读性。", "请使用分栏、网格、侧边导航或粘性目录，不要只输出普通链接串。");
+}
+if (tableCount > 3 && !re(/(compact|dense|font-size:\s*var\(--type-table\)|table-layout:\s*fixed|min-width:)/i)) {
+  add("VQ-W003", "warning", "表格数量较多但缺少紧凑数据表策略。", "style", "大量表格如果只加边框，会显得像默认导出且难以扫读。", "请补充紧凑表格密度、表头、列宽、滚动容器和数字阅读规则。");
+}
+const titleXl = numberVar("--type-title-xl");
+const titleLg = numberVar("--type-title-lg");
+const titleMd = numberVar("--type-title-md");
+if (titleXl && titleLg && (titleXl / titleLg < 1.16 || titleXl / titleLg > 1.8)) {
+  add("VQ-W004", "warning", "H1 与 H2 的字号比例不舒适。", "style", "标题比例过近会缺层级，过大会像营销页。", "请让 H1/H2 保持稳定差异，避免巨大标题或同级标题。");
+}
+if (titleLg && titleMd && (titleLg / titleMd < 1.12 || titleLg / titleMd > 1.55)) {
+  add("VQ-W005", "warning", "H2 与 H3 的字号比例不舒适。", "style", "中层标题比例失衡会破坏长文阅读节奏。", "请调整标题 token，使章节层级清楚但克制。");
+}
+if (!hasDistinctDocComponents && (sectionCount >= 4 || tableCount >= 3)) {
+  add("VQ-W006", "warning", "未检测到足够的组件差异化。", "document", "专业交付物需要目录、正文、表格、提示、元信息等组件有可辨识差异。", "请按 `references/layout-strategy-by-content-shape.md` 为内容形态选择版面策略。");
+}
+if (!has("references/visual-quality-gate.md") && !has("visual-quality-score") && !has("视觉质量评分")) {
+  add("VQ-M001", "manual", "需要基于截图完成视觉质量评分。", "browser", "静态脚本只能发现部分低级视觉风险，不能替代截图复审。", "请按 `references/visual-quality-gate.md` 生成截图、评分，并在完成声明中列出总分和单项分。");
 }
 
 if (sourceFile) {

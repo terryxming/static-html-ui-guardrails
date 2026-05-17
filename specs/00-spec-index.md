@@ -29,4 +29,5 @@
 - 修改任一规格文件时，正式 Skill 的 `CHANGELOG.md` 必须记录变更。
 - `static-html-ui-guardrails` 的输入端是用户已经产生的本地单 HTML 文件，不存在旧式模板套用执行环节。
 - 内容形态参考只用于辅助判断 UI 密度、组件呈现和交互适配，不得把用户内容套进模板。
+- 视觉质量门禁由 `references/visual-quality-gate.md` 和 `references/layout-strategy-by-content-shape.md` 补充约束；脚本通过不等于完成。
 - 交付包根目录中的 3 个汇总规格文件只作为辅助阅读，不替代本目录。

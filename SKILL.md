@@ -28,12 +28,15 @@ description: "本地静态 HTML UI 优化约束。Use when Codex needs to optimi
    - UI token/密度/表格/深色模式：`references/visual-system.md`
    - 组件适配：`references/component-system.md`
    - 内容形态参考：`references/content-shape-adaptation.md`
+   - 内容形态版面策略：`references/layout-strategy-by-content-shape.md`
    - 质量门禁：`references/quality-gates.md`
+   - 视觉质量门禁：`references/visual-quality-gate.md`
    - Chrome 验收：`references/chrome-devtools-mcp-acceptance.md`
    - 发布治理/完成声明/复盘：`references/release-governance.md`
-6. 在保留内容结构的前提下，原位注入或整理 token 化 CSS、浅/深色 token、一键主题切换、本地交互和组件样式。
-7. 输出单 HTML 优化副本；禁止 CDN、外部字体、外部图片、外部 CSS/JS、统计脚本和任何联网依赖。
-8. 运行静态检查：
+6. 判断内容形态并选择版面策略；版面策略只决定 UI 表现方式，不是套模板流程，不得改变信息结构。
+7. 在保留内容结构的前提下，原位注入或整理 token 化 CSS、浅/深色 token、一键主题切换、本地交互和组件样式。
+8. 输出单 HTML 优化副本；禁止 CDN、外部字体、外部图片、外部 CSS/JS、统计脚本和任何联网依赖。
+9. 运行静态检查：
 
 ```bash
 node scripts/check_html_visual.js <target.html> --source <source.html>
@@ -45,10 +48,11 @@ node scripts/check_html_visual.js <target.html> --source <source.html>
 node scripts/check_html_visual.js <target.html>
 ```
 
-9. 按 `references/chrome-devtools-mcp-acceptance.md` 使用 Chrome DevTools MCP 验收：网络请求、控制台、横向溢出、浅/深色截图、主题切换、关键交互、表格可读性和桌面宽度。
-10. 出现任何 `blocker` 必须修复并重跑检查，不得交付。
-11. 完成声明必须使用中文，并包含源文件路径、输出文件路径、是否覆盖源文件、内容结构保持结论、脚本检查结果、Chrome 验收结果、未修复 warning/manual 项。
-12. 完整使用一次 Skill 后，必须逐字询问：`是否复盘本次 Skill 使用质量？请回复“是”或“否”。`
+10. 按 `references/chrome-devtools-mcp-acceptance.md` 使用 Chrome DevTools MCP 验收：网络请求、控制台、横向溢出、浅/深色截图、主题切换、关键交互、表格可读性和桌面宽度。
+11. 按 `references/visual-quality-gate.md` 基于截图做视觉质量评分；总分低于 85 或任一关键单项低于 70 必须二次优化。
+12. 出现任何 `blocker` 必须修复并重跑检查，不得交付。
+13. 完成声明必须使用中文，并包含源文件路径、输出文件路径、是否覆盖源文件、内容结构保持结论、脚本检查结果、Chrome 验收结果、视觉质量评分、截图证据、是否发生二次优化、未修复 warning/manual 项。
+14. 完整使用一次 Skill 后，必须逐字询问：`是否复盘本次 Skill 使用质量？请回复“是”或“否”。`
 
 ## UI 优化规则
 
@@ -58,6 +62,8 @@ node scripts/check_html_visual.js <target.html>
 - 允许增强目录、Tabs、筛选、折叠、状态徽标、风险提示，但不得隐藏关键结论、关键风险或核心数据。
 - 内容形态参考只用于判断密度和组件适配：分析报告、数据仪表盘、知识长文、对比评估、项目交付说明、研究简报。
 - 禁止营销 hero、产品卖点页、装饰性渐变主导页面、卡片堆叠页。
+- 禁止只用灰背景、白卡片、蓝链接和表格边框就声明视觉优化完成。
+- 禁止所有 section 使用同一种卡片样式；必须让目录、正文、表格、代码、提示、元信息等组件有可辨识差异。
 
 ## 硬性停止条件
 
@@ -72,10 +78,14 @@ node scripts/check_html_visual.js <target.html>
 - 深色模式不可读。
 - 未运行静态检查或 Chrome DevTools MCP 验收。
 - 静态检查仍有 `blocker`。
+- 未进行截图视觉复审和视觉质量评分。
+- 视觉质量总分低于 85，或任一关键单项低于 70。
 
 ## 资源说明
 
 - `scripts/check_html_visual.js`：本地静态 HTML UI 优化约束检查脚本，输出 JSON 和 Markdown，用户可读内容为中文。
 - `specs/`：正式执行细节，必须按 `specs/00-spec-index.md` 全量读取。
 - `references/`：按任务需要加载的精简参考。
+- `references/visual-quality-gate.md`：截图视觉复审、评分表、负面清单和二次优化协议。
+- `references/layout-strategy-by-content-shape.md`：内容形态到版面策略的映射，只用于 UI 适配，不用于套模板。
 - `assets/source-sample.html` 与 `assets/guarded-sample.html`：源文件/优化副本对照样例，只能参考 UI 写法，不得套用内容结构。
