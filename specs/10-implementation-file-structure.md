@@ -5,7 +5,6 @@
 ```text
 static-html-ui-guardrails/
 ├─ SKILL.md
-├─ README.md
 ├─ CHANGELOG.md
 ├─ scripts/
 │  └─ check_html_visual.js
@@ -24,7 +23,6 @@ static-html-ui-guardrails/
 ## 必须交付
 
 - `SKILL.md`
-- `README.md`
 - `CHANGELOG.md`
 - `scripts/check_html_visual.js`
 - 6 类内容形态适配参考
@@ -59,21 +57,6 @@ static-html-ui-guardrails/
 - 内容结构保持要求。
 
 禁止提供可直接套用用户内容的页面骨架。
-
-## README 要求
-
-必须包含：
-
-- Skill 是什么。
-- Skill 不做什么。
-- 安装方式。
-- 快速开始。
-- 典型调用。
-- 输出示例。
-- 默认输出优化副本、不覆盖源文件的说明。
-- 支持环境。
-- 故障排查。
-- 版本升级说明。
 
 ## SKILL.md 要求
 

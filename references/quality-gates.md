@@ -193,7 +193,6 @@ Markdown 报告
 static-html-ui-guardrails/
 ├─ SKILL.md
 ├─ CHANGELOG.md
-├─ README.md
 ├─ scripts/
 │  └─ check_html_visual.js
 ├─ examples/
